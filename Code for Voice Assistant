@@ -1,0 +1,60 @@
+import speech_recognition as sr
+import pyttsx3 as pt
+import pywhatkit as pw
+import datetime  
+import wikipedia
+import openai
+import pyjokes
+
+Az_listener= sr.Recognizer()
+engine=pt.init()
+voices= engine.getProperty('voices')
+engine.setProperty('rate', 180)
+engine.setProperty('voice', voices[108].id)
+
+engine.say("Hello , I Am Your Desktop Assistant")
+engine.say('Let me handle your basic tasks..')
+def talk(text):
+    engine.say(text)
+    engine.runAndWait()
+def take_command():
+    try:
+        with sr.Microphone() as source: 
+            print("listening...")
+            voice= Az_listener.listen(source)
+            command= Az_listener.recognize_google(voice)
+            command= command.lower()
+            if 'hey' in command:
+                command = command.replace("hey", " ")
+                print(command)
+    except:     
+        pass
+    return command
+def run_VA():
+    command = take_command()
+    if 'play' in command:
+        song = command.replace('play', ' ')
+        talk("playing" + song)
+        pw.playonyt(song)
+    elif 'time' in  command:
+        time= datetime.datetime.now().strftime("%I:%M:%p")
+        talk('current time is ' + time)
+        print(time)
+    elif 'info' in command:
+        person= command.replace("wiki", " ")
+        info = wikipedia.summary(person, 2)
+        talk(info)
+        print(info)
+    elif "joke" in command:
+        talk(pyjokes.get_joke())
+    else:
+        talk("please say it again")
+    """elif 'ai' in command:
+        anything= command.replace("ai", " ")
+        That_thing= openai.api_key(anything, 4)
+        talk(That_thing)
+        print(That_thing)"""
+   
+
+while True:
+    run_VA()
